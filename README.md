@@ -1,7 +1,3 @@
 # About
 
-The script in this directory scrapes the USPSA classifier website and downloads them
-
-# TODO
-
-- Include title in downloaded filename
+The script in this directory scrapes the USPSA classifier website and downloads them into the `downloaded_pdfs` directory
