@@ -4,6 +4,7 @@ import argparse
 import html
 import re
 import sys
+from dataclasses import dataclass
 from pathlib import Path
 from urllib.parse import unquote, urljoin, urlparse
 
@@ -15,6 +16,14 @@ DEFAULT_URL_PATTERN = re.compile(
     r"""DEFAULT_URL\s*=\s*(['"])(.*?)\1""",
     re.IGNORECASE | re.DOTALL,
 )
+
+
+@dataclass(frozen=True)
+class ClassifierLink:
+    viewer_url: str
+    title: str | None = None
+    scoring: str | None = None
+    rounds: str | None = None
 
 
 def load_html(
@@ -52,18 +61,128 @@ def load_html(
     )
 
 
+def clean_text(value: str | None) -> str | None:
+    """
+    Normalize whitespace in text extracted from HTML.
+    """
+    if value is None:
+        return None
+
+    value = re.sub(r"\s+", " ", value).strip()
+
+    return value or None
+
+
+def compact_filename_piece(value: str | None) -> str | None:
+    """
+    Turn a human-readable text field into a compact filename-safe piece.
+
+    Examples:
+        Hillbillton Drill -> HillbilltonDrill
+        Fixed Time        -> FixedTime
+        Fluffy's Revenge 1 -> FluffysRevenge1
+    """
+    value = clean_text(value)
+
+    if not value:
+        return None
+
+    # Remove anything that is not a letter or digit.
+    value = re.sub(r"[^A-Za-z0-9]+", "", value)
+
+    return value or None
+
+
+def rounds_filename_piece(value: str | None) -> str | None:
+    """
+    Turn a rounds value into a filename suffix.
+
+    Examples:
+        12 -> 12rounds
+        1  -> 1round
+        -  -> None
+    """
+    value = clean_text(value)
+
+    if not value:
+        return None
+
+    match = re.search(r"\d+", value)
+
+    if not match:
+        return None
+
+    rounds = int(match.group(0))
+
+    if rounds == 1:
+        return "1round"
+
+    return f"{rounds}rounds"
+
+
+def parse_classifier_metadata_from_card(
+    card,
+) -> tuple[str | None, str | None, str | None]:
+    """
+    Extract title, scoring, and rounds from one classifier card.
+    """
+    title = None
+    scoring = None
+    rounds = None
+
+    title_element = card.select_one("h6.card-subtitle")
+
+    if title_element is not None:
+        title = clean_text(title_element.get_text(" ", strip=True))
+
+    card_text = card.select_one("p.card-text")
+
+    if card_text is not None:
+        lines = [
+            clean_text(line)
+            for line in card_text.get_text("\n", strip=True).splitlines()
+        ]
+
+        for line in lines:
+            if not line:
+                continue
+
+            scoring_match = re.match(
+                r"^Scoring:\s*(.+)$",
+                line,
+                flags=re.IGNORECASE,
+            )
+
+            if scoring_match:
+                scoring = clean_text(scoring_match.group(1))
+                continue
+
+            rounds_match = re.match(
+                r"^Rounds:\s*(.+)$",
+                line,
+                flags=re.IGNORECASE,
+            )
+
+            if rounds_match:
+                rounds = clean_text(rounds_match.group(1))
+                continue
+
+    return title, scoring, rounds
+
+
 def find_view_links(
     html_text: str,
     base_url: str,
-) -> list[str]:
+) -> list[ClassifierLink]:
     """
-    Find anchor elements whose visible text is 'View'.
+    Find View buttons and extract classifier metadata from their card.
 
     Duplicate URLs are removed while preserving their original order.
     """
     soup = BeautifulSoup(html_text, "html.parser")
 
-    urls: list[str] = []
+    links: list[ClassifierLink] = []
+    seen_urls: set[str] = set()
 
     for anchor in soup.find_all("a", href=True):
         button_text = anchor.get_text(strip=True)
@@ -76,10 +195,34 @@ def find_view_links(
         if not href:
             continue
 
-        absolute_url = urljoin(base_url, href)
-        urls.append(absolute_url)
+        viewer_url = urljoin(base_url, href)
 
-    return list(dict.fromkeys(urls))
+        if viewer_url in seen_urls:
+            continue
+
+        seen_urls.add(viewer_url)
+
+        title = None
+        scoring = None
+        rounds = None
+
+        card = anchor.find_parent(class_="card")
+
+        if card is not None:
+            title, scoring, rounds = parse_classifier_metadata_from_card(
+                card,
+            )
+
+        links.append(
+            ClassifierLink(
+                viewer_url=viewer_url,
+                title=title,
+                scoring=scoring,
+                rounds=rounds,
+            )
+        )
+
+    return links
 
 
 def extract_pdf_url_from_viewer(
@@ -128,7 +271,10 @@ def filename_from_url(
     fallback_index: int,
 ) -> str:
     """
-    Create a filename from the final PDF URL.
+    Create the base PDF filename from the final PDF URL.
+
+    Example:
+        https://uspsa.org/viewer/pdf/99-28.pdf -> 99-28.pdf
     """
     parsed_url = urlparse(url)
     decoded_path = unquote(parsed_url.path)
@@ -141,6 +287,41 @@ def filename_from_url(
         filename += ".pdf"
 
     return filename
+
+
+def append_classifier_metadata_to_filename(
+    base_filename: str,
+    classifier: ClassifierLink,
+) -> str:
+    """
+    Append classifier title, scoring, and rounds to the original filename.
+
+    Example:
+        99-28.pdf + Hillbillton Drill, Comstock, 12
+        ->
+        99-28_HillbilltonDrill_Comstock_12rounds.pdf
+    """
+    base_path = Path(base_filename)
+
+    pieces: list[str] = []
+
+    title_piece = compact_filename_piece(classifier.title)
+    scoring_piece = compact_filename_piece(classifier.scoring)
+    rounds_piece = rounds_filename_piece(classifier.rounds)
+
+    if title_piece:
+        pieces.append(title_piece)
+
+    if scoring_piece:
+        pieces.append(scoring_piece)
+
+    if rounds_piece:
+        pieces.append(rounds_piece)
+
+    if not pieces:
+        return base_filename
+
+    return f"{base_path.stem}_{'_'.join(pieces)}{base_path.suffix}"
 
 
 def unique_path(
@@ -257,6 +438,7 @@ def request_actual_pdf(
 def save_pdf(
     pdf_response: requests.Response,
     actual_pdf_url: str,
+    classifier: ClassifierLink,
     output_directory: Path,
     index: int,
 ) -> Path:
@@ -269,14 +451,19 @@ def save_pdf(
             "begin with the PDF signature."
         )
 
-    filename = filename_from_url(
+    base_filename = filename_from_url(
         actual_pdf_url,
         fallback_index=index,
     )
 
+    final_filename = append_classifier_metadata_to_filename(
+        base_filename=base_filename,
+        classifier=classifier,
+    )
+
     output_path = unique_path(
         output_directory,
-        filename,
+        final_filename,
     )
 
     temporary_path = output_path.with_suffix(
@@ -307,7 +494,7 @@ def save_pdf(
 
 def download_pdf(
     session: requests.Session,
-    viewer_url: str,
+    classifier: ClassifierLink,
     output_directory: Path,
     index: int,
     total: int,
@@ -318,28 +505,38 @@ def download_pdf(
     Returns True on success and False on failure.
     """
     print(f"[{index}/{total}] Processing:")
-    print(f"    {viewer_url}")
+    print(f"    Viewer URL: {classifier.viewer_url}")
+
+    if classifier.title:
+        print(f"    Title:      {classifier.title}")
+
+    if classifier.scoring:
+        print(f"    Scoring:    {classifier.scoring}")
+
+    if classifier.rounds:
+        print(f"    Rounds:     {classifier.rounds}")
 
     try:
         pdf_response, actual_pdf_url = request_actual_pdf(
             session=session,
-            initial_url=viewer_url,
+            initial_url=classifier.viewer_url,
         )
 
-        if actual_pdf_url != viewer_url:
+        if actual_pdf_url != classifier.viewer_url:
             print(f"    Actual PDF: {actual_pdf_url}")
 
         output_path = save_pdf(
             pdf_response=pdf_response,
             actual_pdf_url=actual_pdf_url,
+            classifier=classifier,
             output_directory=output_directory,
             index=index,
         )
 
         file_size = output_path.stat().st_size
 
-        print(f"    Saved: {output_path}")
-        print(f"    Size:  {file_size:,} bytes")
+        print(f"    Saved:      {output_path}")
+        print(f"    Size:       {file_size:,} bytes")
         print()
 
         return True
@@ -392,34 +589,34 @@ def download_all_pdfs(
             session=session,
         )
 
-        view_urls = find_view_links(
+        classifier_links = find_view_links(
             html_text=html_text,
             base_url=base_url,
         )
 
-        if not view_urls:
+        if not classifier_links:
             print("No View links were found.")
             return 2
 
-        print(f"Found {len(view_urls)} View link(s).")
+        print(f"Found {len(classifier_links)} View link(s).")
         print()
 
         successful = 0
 
-        for index, viewer_url in enumerate(
-            view_urls,
+        for index, classifier in enumerate(
+            classifier_links,
             start=1,
         ):
             if download_pdf(
                 session=session,
-                viewer_url=viewer_url,
+                classifier=classifier,
                 output_directory=output_directory,
                 index=index,
-                total=len(view_urls),
+                total=len(classifier_links),
             ):
                 successful += 1
 
-        failed = len(view_urls) - successful
+        failed = len(classifier_links) - successful
 
         print("Download summary")
         print("----------------")
@@ -433,8 +630,9 @@ def download_all_pdfs(
 def main() -> int:
     parser = argparse.ArgumentParser(
         description=(
-            "Download the actual PDFs behind View buttons, "
-            "including links that open PDF.js viewer pages."
+            "Download the actual PDFs behind USPSA classifier View "
+            "buttons, including PDF.js viewer links, and include "
+            "classifier metadata in each filename."
         )
     )
 
