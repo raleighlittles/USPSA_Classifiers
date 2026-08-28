@@ -1,0 +1,19 @@
+Title:           Classifier 20-01-02-03
+Creator:         PowerPoint
+Producer:        macOS Version 10.15.7 (Build 19H2) Quartz PDFContext
+CreationDate:    Tue Nov  3 16:17:51 2020 MST
+ModDate:         Tue Nov  3 16:18:12 2020 MST
+Custom Metadata: no
+Metadata Stream: yes
+Tagged:          no
+UserProperties:  no
+Suspects:        no
+Form:            AcroForm
+JavaScript:      no
+Pages:           2
+Encrypted:       no
+Page size:       612 x 792 pts (letter)
+Page rot:        0
+File size:       4717048 bytes
+Optimized:       yes
+PDF version:     1.7

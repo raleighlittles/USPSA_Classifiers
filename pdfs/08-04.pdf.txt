@@ -1,0 +1,20 @@
+Title:           Part9_08-01_08-06.pmd
+Author:          roger
+Creator:         PageMaker 7.0
+Producer:        Acrobat Distiller 7.0.5 (Windows)
+CreationDate:    Mon Apr 18 13:58:54 2011 MST
+ModDate:         Mon Apr 18 13:58:54 2011 MST
+Custom Metadata: no
+Metadata Stream: yes
+Tagged:          no
+UserProperties:  no
+Suspects:        no
+Form:            none
+JavaScript:      no
+Pages:           2
+Encrypted:       no
+Page size:       612 x 792 pts (letter)
+Page rot:        0
+File size:       55870 bytes
+Optimized:       yes
+PDF version:     1.4

@@ -1,0 +1,20 @@
+Title:           Intro.pmd
+Author:          roger
+Creator:         PageMaker 7.0
+Producer:        Acrobat Distiller 9.0.0 (Windows)
+CreationDate:    Fri Jul  1 12:16:26 2016 MST
+ModDate:         Fri Jul  1 12:16:38 2016 MST
+Custom Metadata: no
+Metadata Stream: yes
+Tagged:          no
+UserProperties:  no
+Suspects:        no
+Form:            none
+JavaScript:      no
+Pages:           3
+Encrypted:       no
+Page size:       612 x 792 pts (letter)
+Page rot:        0
+File size:       167652 bytes
+Optimized:       yes
+PDF version:     1.6

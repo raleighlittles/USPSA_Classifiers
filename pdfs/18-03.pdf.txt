@@ -1,0 +1,19 @@
+Title:           CM 18-03
+Creator:         CorelDRAW Version 12.0
+Producer:        Corel PDF Engine Version 1.0.0.458
+CreationDate:    Sun Nov 25 09:24:19 2018 MST
+ModDate:         Sun Nov 25 09:24:19 2018 MST
+Custom Metadata: no
+Metadata Stream: no
+Tagged:          no
+UserProperties:  no
+Suspects:        no
+Form:            none
+JavaScript:      no
+Pages:           3
+Encrypted:       no
+Page size:       612 x 792 pts (letter)
+Page rot:        0
+File size:       268197 bytes
+Optimized:       yes
+PDF version:     1.3

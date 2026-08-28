@@ -1,0 +1,21 @@
+Title:           USPSA Classifier Stage 23-02
+Keywords:        
+Author:          Rick Brotzel
+Creator:         Adobe Acrobat 22.3
+Producer:        Adobe Acrobat 22.3 Image Conversion Plug-in
+CreationDate:    Fri Feb  9 15:14:48 2024 MST
+ModDate:         Fri Feb  9 15:15:31 2024 MST
+Custom Metadata: no
+Metadata Stream: yes
+Tagged:          no
+UserProperties:  no
+Suspects:        no
+Form:            none
+JavaScript:      no
+Pages:           2
+Encrypted:       no
+Page size:       2550 x 3300 pts
+Page rot:        0
+File size:       3950158 bytes
+Optimized:       no
+PDF version:     1.6

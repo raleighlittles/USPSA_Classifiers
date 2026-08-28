@@ -1,0 +1,19 @@
+Title:           CM 18-08
+Creator:         CorelDRAW Version 12.0
+Producer:        Corel PDF Engine Version 1.0.0.458
+CreationDate:    Sun Nov 25 09:26:29 2018 MST
+ModDate:         
+Custom Metadata: yes
+Metadata Stream: yes
+Tagged:          no
+UserProperties:  no
+Suspects:        no
+Form:            none
+JavaScript:      no
+Pages:           3
+Encrypted:       no
+Page size:       612 x 792 pts (letter)
+Page rot:        0
+File size:       404152 bytes
+Optimized:       yes
+PDF version:     1.6

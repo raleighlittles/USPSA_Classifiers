@@ -1,0 +1,20 @@
+Title:           PowerPoint Presentation
+Author:          Jodi Humann
+Creator:         Acrobat PDFMaker 22 for PowerPoint
+Producer:        Adobe PDF Library 22.3.58
+CreationDate:    Tue Dec  6 20:22:06 2022 MST
+ModDate:         Tue Dec  6 20:22:07 2022 MST
+Custom Metadata: no
+Metadata Stream: yes
+Tagged:          yes
+UserProperties:  no
+Suspects:        no
+Form:            none
+JavaScript:      no
+Pages:           2
+Encrypted:       no
+Page size:       540 x 720 pts
+Page rot:        0
+File size:       1208714 bytes
+Optimized:       yes
+PDF version:     1.6

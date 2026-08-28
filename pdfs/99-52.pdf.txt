@@ -1,0 +1,20 @@
+Title:           Part5_99-51_99-63.pmd
+Author:          roger
+Creator:         PageMaker 7.0
+Producer:        Acrobat Distiller 7.0.5 (Windows)
+CreationDate:    Wed Dec  5 16:01:03 2007 MST
+ModDate:         Wed Dec  5 16:01:03 2007 MST
+Custom Metadata: no
+Metadata Stream: yes
+Tagged:          no
+UserProperties:  no
+Suspects:        no
+Form:            none
+JavaScript:      no
+Pages:           2
+Encrypted:       no
+Page size:       612 x 792 pts (letter)
+Page rot:        0
+File size:       91948 bytes
+Optimized:       yes
+PDF version:     1.4

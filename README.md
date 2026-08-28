@@ -1,2 +1,7 @@
-# USPSA_Classifiers
-Collection of USPSA classifiers downloaded via scraper script
+# About
+
+The script in this directory scrapes the USPSA classifier website and downloads them
+
+# TODO
+
+- Include title in downloaded filename

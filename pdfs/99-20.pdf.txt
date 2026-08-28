@@ -1,0 +1,20 @@
+Title:           Part2.pmd
+Author:          roger
+Creator:         PageMaker 7.0
+Producer:        Acrobat Distiller 7.0 (Windows)
+CreationDate:    Wed May 24 16:08:36 2006 MST
+ModDate:         Wed May 24 16:08:36 2006 MST
+Custom Metadata: no
+Metadata Stream: yes
+Tagged:          no
+UserProperties:  no
+Suspects:        no
+Form:            none
+JavaScript:      no
+Pages:           2
+Encrypted:       no
+Page size:       612 x 792 pts (letter)
+Page rot:        0
+File size:       84199 bytes
+Optimized:       yes
+PDF version:     1.3
